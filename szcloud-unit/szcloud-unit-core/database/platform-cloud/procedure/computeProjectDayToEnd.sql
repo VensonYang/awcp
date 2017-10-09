@@ -1,0 +1,53 @@
+
+DROP PROCEDURE IF EXISTS computeProjectDayToEnd;
+CREATE PROCEDURE computeProjectDayToEnd()
+BEGIN
+  DECLARE l_PROJECT_ID varchar(100);
+  DECLARE l_ACCEPT_TIME DATETIME;
+  DECLARE l_TOTAL_DAY_TO_END INT;
+  DECLARE l_TEMP_DATE DATETIME;
+  DECLARE l_INTERVAL INT;
+  DECLARE l_DAY_OF_WEEK INT;
+  DECLARE l_CNT INT;
+  DECLARE done INT DEFAULT FALSE;
+  DECLARE cur CURSOR FOR SELECT a.PROJECT_ID, a.ACCEPT_TIME, b.TOTAL_DAY_TO_END FROM env_project_base_info a
+    INNER JOIN env_system_business_item b ON a.PROJECT_TYPE = b.ITEM_ID
+    WHERE a.ACCEPT_TIME IS NOT NULL AND b.TOTAL_DAY_TO_END IS NOT NULL AND ( a.DAY_TO_END IS NULL OR a.DAY_TO_END > 0)
+    ORDER BY a.ACCEPT_TIME ASC;
+  DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
+  OPEN cur;  
+    f_loop:LOOP
+      FETCH cur INTO l_PROJECT_ID,l_ACCEPT_TIME,l_TOTAL_DAY_TO_END;
+      IF done THEN
+        LEAVE f_loop;
+      END IF;   
+      SET l_TEMP_DATE = l_ACCEPT_TIME;
+      SET l_INTERVAL = 0;
+      WHILE l_TEMP_DATE < NOW() DO
+        SET l_DAY_OF_WEEK = DAYOFWEEK(l_TEMP_DATE);
+        IF l_DAY_OF_WEEK = 1 ||  l_DAY_OF_WEEK = 7 THEN
+          BEGIN
+             SELECT COUNT(1) INTO l_CNT FROM env_specialdays WHERE START_DATE <= l_TEMP_DATE AND DATE_ADD(END_DATE,INTERVAL 1 DAY) >= l_TEMP_DATE AND TYPE='1';
+             IF l_CNT > 0 THEN
+                SET l_INTERVAL = l_INTERVAL + 1;#是否是特殊周末
+             END IF; 
+          END;
+         ELSE 
+            BEGIN
+              SELECT COUNT(1) INTO l_CNT FROM env_specialdays WHERE START_DATE <= l_TEMP_DATE AND  DATE_ADD(END_DATE,INTERVAL 1 DAY) >= l_TEMP_DATE AND TYPE='0';
+              IF l_CNT = 0 THEN
+               SET l_INTERVAL = l_INTERVAL + 1;#是否特殊工作日
+              END IF;
+            END;
+         END IF;
+        SET l_TEMP_DATE = DATE_ADD(l_TEMP_DATE,INTERVAL 1 DAY);
+      END WHILE;
+      SET l_CNT = l_TOTAL_DAY_TO_END - l_INTERVAL + 1;  
+      SELECT l_ACCEPT_TIME, l_TEMP_DATE,l_INTERVAL,l_PROJECT_ID;
+      UPDATE env_project_base_info 
+      SET DAY_TO_END = l_CNT
+      WHERE PROJECT_ID = l_PROJECT_ID;
+    END LOOP f_loop;
+  -- 关闭游标
+  CLOSE cur;
+END;

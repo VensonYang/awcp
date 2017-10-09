@@ -1,0 +1,43 @@
+
+drop table temp_env_review_table;
+
+CREATE TABLE `temp_env_review_table` (
+  `ID` varchar(36) NOT NULL,
+  `PROJECT_ID` varchar(36) DEFAULT NULL COMMENT '组名',
+  `EXPERT_ID` varchar(36) DEFAULT NULL COMMENT '专家ID',
+  `REVIEW_TYPE` varchar(50) DEFAULT NULL COMMENT '评审类型',
+  `PROJECT_ORDER` int(10) DEFAULT NULL COMMENT '序号 ',
+  `APPLICATION_NAME` varchar(255) DEFAULT NULL COMMENT '申请单位',
+  `NECESSITY_IMPORTANT` int(10) DEFAULT '0' COMMENT '必要性与重要性',
+  `INNOVATION_FEASIBILITY` int(11) DEFAULT '0' COMMENT '创新性与可行性',
+  `PLATFORM_CONDITION` int(11) DEFAULT '0' COMMENT '平台条件(成果转化基础条件)',
+  `FOUNDATIONAL_CONDITION` int(11) DEFAULT '0' COMMENT '基础条件及配套能力(研发基础条件)',
+  `SUPPORT_ABILITY` int(11) DEFAULT '0' COMMENT '项目保障能力(增值服务水平)',
+  `TEAM_STRUCTION` int(11) DEFAULT '0' COMMENT '团队结构及能力(团队与规范化建设水平)',
+  `OPERATION` int(11) DEFAULT '0' COMMENT '运行管理机制',
+  `EXPECT_BENEFIT` int(11) DEFAULT '0' COMMENT '预期效益',
+  `LAB_CONDITION_LEVEL` int(11) DEFAULT '0' COMMENT '实验室条件和水平',
+  `EVALUATION_OPINIONS` varchar(3000) DEFAULT NULL COMMENT '评价意见',
+  `TOTAL` int(11) DEFAULT '0' COMMENT '合计',
+  `REVIEW_TIME` datetime DEFAULT NULL COMMENT '评审时间(验收时间)',
+  `REMARK` varchar(1000) DEFAULT NULL COMMENT '备注',
+  `STATUS` int(11) DEFAULT NULL,
+  `IS_AVOID` int(10) DEFAULT '0' COMMENT '是否回避,0不回避，1回避',
+  `SERVICE_ABILITY` int(10) DEFAULT NULL COMMENT '服务能力',
+  `INCUBATION_PERFORMANCE` int(10) DEFAULT '0' COMMENT '孵化绩效(孵化培育能力,成果转化基础条件)',
+  `RESEARCH_ABLITY` int(10) DEFAULT '0' COMMENT '研究能力',
+  `COMPLETENESS` int(10) DEFAULT '0',
+  `OVERSEA_TALENT_CERTIFICATE` varchar(20) DEFAULT NULL COMMENT '项目负责人已经取得《深圳市海外高层次人才证书》',
+  `MAJORITY_SHAREHOLDER` varchar(20) DEFAULT NULL COMMENT '项目负责人为申请企业控股股东',
+  `REPATRIATE_YEAR` varchar(20) DEFAULT NULL COMMENT '回国/来深工作年限',
+  `OVERSEA_EXPERIENCE` varchar(20) DEFAULT NULL COMMENT '项目负责人具有2年以上海外学习或工作经历',
+  `REGISTRATION_YEAR_LESS5` varchar(20) DEFAULT NULL COMMENT '企业注册成立时间不超过5年',
+  `FULLTIME_IN_COMPANY` varchar(20) DEFAULT NULL COMMENT '项目负责人在项目执行期内须全时在申请单位工作',
+  `ACHIEVENMENT_EXIST` varchar(20) DEFAULT NULL COMMENT '项目需转化成果已形成样机、原型，且所有权属于项目负责人',
+  `IS_FINISHED` varchar(10) DEFAULT NULL,
+  `IS_PASS` varchar(10) DEFAULT NULL,
+  `APPRAISAL_DATE` datetime DEFAULT NULL COMMENT '评估日期(验收综合评审用)',
+  PRIMARY KEY (`ID`),
+  KEY `IX_temp_env_review_table_project_expert_id` (`PROJECT_ID`,`EXPERT_ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+

@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:cache="http://www.springframework.org/schema/cache" 
+	xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:ehcache="http://ehcache-spring-annotations.googlecode.com/svn/schema/ehcache-spring"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans-3.1.xsd  
+	http://www.springframework.org/schema/cache    
+	http://www.springframework.org/schema/cache/spring-cache.xsd
+	http://www.springframework.org/schema/context   
+	http://www.springframework.org/schema/context/spring-context-3.1.xsd  
+	http://www.springframework.org/schema/aop   
+	http://www.springframework.org/schema/aop/spring-aop-3.1.xsd  
+	http://www.springframework.org/schema/tx   
+	http://www.springframework.org/schema/tx/spring-tx-3.1.xsd
+	http://ehcache-spring-annotations.googlecode.com/svn/schema/ehcache-spring  
+	http://ehcache-spring-annotations.googlecode.com/svn/schema/ehcache-spring/ehcache-spring-1.1.xsd">
+	
+     
+     <bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">    
+    	 <property name="locations">    
+        	 <list>    
+           	 	 <value>classpath:conf/*.properties</value>    
+       		 </list>    
+    	 </property>    
+ 	 </bean> 
+ 	
+ 	 
+ 	 <!-- 
+    <bean id="defaultCacheManager" class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean">
+      <property name="shared" value="true"></property>
+      <property name="configLocation">  
+        <value>classpath:conf/ehcache.xml</value>  
+      </property>  
+    </bean>  
+        -->
+   	<!-- 定义ehCache的工厂，并设置所使用的Cache name  
+    <bean id="ehCache" class="org.springframework.cache.ehcache.EhCacheFactoryBean">  
+      <property name="cacheManager">  
+        <ref local="defaultCacheManager"/>  
+      </property>  
+      <property name="cacheName">  
+          <value>ehCache</value>  
+      </property>  
+    </bean> 
+     -->
+ 
+	
+	
+	<!-- 应用spring cache注解功能  -->
+	<!-- <cache:annotation-driven /> -->
+
+ 	<!--创建spring cache bean
+	<bean id="cacheManager" class="org.springframework.cache.support.SimpleCacheManager">
+		<property name="caches">
+			<set>
+				<bean
+					class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean"
+					p:name="default" />
+
+				配置缓存 
+				<bean
+					class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean"
+					p:name="data" />
+			</set>
+		</property>
+	</bean>-->
+	    
+    <!--bean id="dataSource"
+          class="org.springframework.jdbc.datasource.DriverManagerDataSource"
+          p:driverClassName="${jdbc.driverClassName}"
+          p:url="${jdbc.url}"
+          p:username="${jdbc.username}"
+          p:password="${jdbc.password}" /-->
+    
+    <!-- ADD PERSISTENCE SUPPORT HERE (jpa, hibernate, etc) -->
+    
+    <!-- 任务调度 quatz -->
+	<!-- 触发器 -->
+	<!-- 
+	<bean id="task"
+		class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+		<property name="triggers">
+			<list>
+				<ref bean="arpuTrigger" />
+			</list>
+		</property>
+		<property name="startupDelay" value="20" />
+	</bean>
+ -->
+
+	<!-- session start -->
+	<!--<bean id="arpuTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail" ref="arpuJobDetail" />
+		<property name="cronExpression" value="0 0 03 * * ?" />
+	</bean>-->
+	<!--
+	<bean id="arpuJobDetail"
+		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject" ref="autoTask" />
+		<property name="targetMethod" value="execute" />
+	</bean>-->
+	<!-- session end -->
+
+
+
+	<!--定时任务 -->
+	<!--
+	<bean id="autoTask" class="com.oss.productdata.task.AutoTask">
+		<property name="atuoBackDataManager" ref="atuoBackDataManager" />
+	</bean>
+	
+	<bean id="atuoBackDataManager" class="com.oss.productdata.service.AtuoBackDataManager">
+	</bean>
+    -->
+    <!-- 数据源 -->
+	<bean id="dataSource" destroy-method="close" class="org.apache.commons.dbcp.BasicDataSource">
+		<property name="driverClassName" value="${driver}" />
+		<property name="url" value="${url}" />
+		<property name="username" value="${username}" />
+		<property name="password" value="${password}" /> 
+		<!-- 以下为可选参数 yaoms -->
+		<property name="initialSize" value="10" />
+		<property name="minIdle" value="5" />
+		<property name="maxIdle" value="20" />
+		<property name="maxActive" value="100" />
+		<property name="logAbandoned" value="true" />
+		<property name="removeAbandoned" value="true" />
+		<property name="removeAbandonedTimeout" value="30000" />
+		<property name="maxWait" value="1000" />
+		<property name="validationQuery" value="select 1" />
+		<property name="validationQueryTimeout" value="100" />
+		<property name="testWhileIdle" value="true" />
+	</bean>
+
+	<!-- 配置sqlSessionFactory -->
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="dataSource"></property>
+		<property name="configLocation" value="classpath:conf/mybatis-config.xml"></property>
+		<property name="mapperLocations" value="classpath*:org/szcloud/**/*_SqlMap.xml"/> 
+	</bean>
+	
+	<bean id="sqlSessionTemplate" class="org.mybatis.spring.SqlSessionTemplate">
+		<constructor-arg index="0"  ref="sqlSessionFactory" />
+	</bean> 
+	
+	<bean id="jdbcRepository" class="org.szcloud.framework.core.domain.EntityRepositoryJDBC">
+		<constructor-arg index="0"  ref="dataSource" />
+	</bean>
+	
+	<!-- 配置事务 -->
+	<bean id="txManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource"></property>
+	</bean>
+	
+	<!--使用基于注解方式配置事务 -->
+	<tx:annotation-driven transaction-manager="txManager" />
+	
+<!-- 	 <aop:config>
+        <aop:pointcut id="baseServiceMethods" expression="execution(* nsccsz.gov.cn.*.service.*.*(..))" />
+        <aop:advisor advice-ref="txAdvice" pointcut-ref="baseServiceMethods" />
+    </aop:config>
+
+    <aop:aspectj-autoproxy />
+
+    <tx:advice id="txAdvice" transaction-manager="txManager">
+        <tx:attributes>
+            <tx:method name="select*" read-only="true" propagation="REQUIRED" />
+            <tx:method name="find*" read-only="true" propagation="REQUIRED" />
+            <tx:method name="save*" propagation="REQUIRED" isolation="REPEATABLE_READ" />
+            <tx:method name="update*" propagation="REQUIRED" isolation="REPEATABLE_READ" />
+            <tx:method name="add*" propagation="REQUIRED" isolation="REPEATABLE_READ" />
+            <tx:method name="delete*" propagation="REQUIRED" isolation="REPEATABLE_READ" />
+        </tx:attributes>
+    </tx:advice> -->
+	<!-- 开启自动扫描 -->
+	<context:annotation-config/> 
+	<context:component-scan base-package="org.szcloud" use-default-filters="false">
+		<context:include-filter type="annotation" expression="org.springframework.stereotype.Service" />
+		<context:include-filter type="annotation" expression="org.springframework.stereotype.Repository" />
+		<context:include-filter type="annotation" expression="org.springframework.stereotype.Component" />
+	</context:component-scan>
+	
+	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		<property name="basePackage" value="org.szcloud" />
+	</bean>
+         
+</beans>

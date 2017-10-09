@@ -1,0 +1,60 @@
+package BP.WF.Template.Rpt;
+
+import BP.DA.*;
+import BP.Port.*;
+import BP.En.*;
+import BP.WF.*;
+import BP.Sys.*;
+
+/** 
+ 报表设计
+ 
+*/
+public class MapRptAttr extends EntityNoNameAttr
+{
+	/** 
+	 查询的物理表
+	 
+	*/
+	public static final String PTable = "PTable";
+	/** 
+	 备注
+	 
+	*/
+	public static final String Note = "Note";
+	/** 
+	 继承的报表FK_MapData
+	 
+	*/
+	public static final String ParentMapData = "ParentMapData";
+	/** 
+	 流程编号
+	 
+	*/
+	public static final String FK_Flow = "FK_Flow";
+
+//C# TO JAVA CONVERTER TODO TASK: There is no preprocessor in Java:
+		///#region 权限控制 2014-12-18
+	/** 
+	 报表查看权限控制方式
+	 
+	*/
+	public static final String RightViewWay = "RightViewWay";
+	/** 
+	 数据存储
+	 
+	*/
+	public static final String RightViewTag = "RightViewTag";
+	/** 
+	 部门数据权限控制方式
+	 
+	*/
+	public static final String RightDeptWay = "RightDeptWay";
+	/** 
+	 数据存储
+	 
+	*/
+	public static final String RightDeptTag = "RightDeptTag";
+//C# TO JAVA CONVERTER TODO TASK: There is no preprocessor in Java:
+		///#endregion 权限控制
+}

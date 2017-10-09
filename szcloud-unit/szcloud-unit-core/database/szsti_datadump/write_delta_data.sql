@@ -1,0 +1,138 @@
+
+
+#删除临时表；
+DROp TABLE tmp_user_account_into;
+DROp TABLE tmp_user_info;
+
+#创建已存在数据的临时表；
+CREATE TEMPORARY TABLE tmp_user_account_into ( 
+      ORG_CODE VARCHAR(100)  NULL, 
+      USER_ID_CARD_NUMBER VARCHAR(100)  NULL ,
+      USER_PWD VARCHAR(500) NULL
+  );
+ALTER TABLE `tmp_user_account_into` ADD INDEX index_tmp_user_account_into_org_id ( `ORG_CODE`,USER_ID_CARD_NUMBER );
+INSERT INTO tmp_user_account_into(ORG_CODE,USER_ID_CARD_NUMBER, USER_PWD)
+SELECT a.ORG_CODE, b.USER_ID_CARD_NUMBER,b.USER_PWD FROM p_un_group a
+INNER JOIN p_un_user_base_info b ON a.GROUP_ID = b.GROUP_ID;
+#创建旧系统中所有的用户的临时表;
+CREATE TEMPORARY TABLE tmp_user_info ( 
+      ORG_CODE VARCHAR(100)  NULL, 
+      USER_ID_CARD_NUMBER VARCHAR(100)  NULL ,
+      USER_PWD VARCHAR(500) NULL
+  );  
+ALTER TABLE `tmp_user_info` ADD INDEX index_tmp_user_info_org_id ( `ORG_CODE`,USER_ID_CARD_NUMBER );
+INSERT INTO tmp_user_info(ORG_CODE,USER_ID_CARD_NUMBER, USER_PWD)
+SELECT CASE a.ORG_CODE WHEN 'expert' THEN 'EXPERT01-1' WHEN '1' THEN 'SZSTI000-1' ELSE a.ORG_CODE END AS ORG_CODE,
+a.USER_ID_CARD_NUMBER ,a.USER_PWD FROM temp_szsti_user a;
+
+#导出增量用户数据，用来修改密码；
+SELECT a.ORG_CODE, a.USER_ID_CARD_NUMBER,a.USER_PWD FROM tmp_user_info a
+LEFT JOIN tmp_user_account_into b ON a.ORG_CODE = b.ORG_CODE AND a.USER_ID_CARD_NUMBER = b.USER_ID_CARD_NUMBER
+WHERE b.USER_ID_CARD_NUMBER IS NULL;
+
+
+
+#generate p_un_group #为增量数据创建组织机构的记录
+INSERT INTO p_un_group(GROUP_TYPE, GROUP_CH_NAME, ORG_CODE, GROUP_ADDRESS, GROUP_BUSINESS_SPHERE, CONTACT_NUMBER, PID)
+SELECT 1, GROUP_CH_NAME, ORG_CODE, GROUP_ADDRESS, GROUP_BUSINESS_SPHERE, CONTACT_NUMBER, '0' FROM temp_szsti_group
+WHERE LENGTH(ORG_CODE) <=20 AND ORG_CODE NOT IN(
+SELECT ORG_CODE FROM p_un_group WHERE ORG_CODE IS NOT NULL
+);
+
+
+
+#generate p_un_user_base_info 
+#it does not contain expert
+INSERT INTO p_un_user_base_info(USER_NAME, USER_PWD, USER_ID_CARD_NUMBER, NAME,MOBILE, USER_EMAIL,GROUP_ID)
+SELECT a.USER_ID_CARD_NUMBER, a.USER_PWD, a.USER_ID_CARD_NUMBER, a.NAME,SUBSTRING(a.MOBILE,1,20), a.USER_EMAIL,b.GROUP_ID  FROM temp_szsti_user a
+INNER JOIN p_un_group b ON a.ORG_CODE = b.ORG_CODE
+INNER JOIN (SELECT a.ORG_CODE, a.USER_ID_CARD_NUMBER,a.USER_PWD FROM tmp_user_info a
+LEFT JOIN tmp_user_account_into b ON a.ORG_CODE = b.ORG_CODE AND a.USER_ID_CARD_NUMBER = b.USER_ID_CARD_NUMBER
+WHERE b.USER_ID_CARD_NUMBER IS NULL) c ON c.ORG_CODE = a.ORG_CODE AND c.USER_ID_CARD_NUMBER = a.USER_ID_CARD_NUMBER
+WHERE b.GROUP_TYPE=1 
+
+#generate 专家信息,科创委专家的组织ID为“４”
+INSERT INTO p_un_user_base_info(USER_NAME, USER_PWD, USER_ID_CARD_NUMBER, NAME,MOBILE, USER_EMAIL,GROUP_ID)
+SELECT USER_ID_CARD_NUMBER, USER_PWD, USER_ID_CARD_NUMBER, SUBSTRING(NAME,1,30) AS NAME,SUBSTRING(MOBILE,1,20), USER_EMAIL,4 from temp_szsti_user 
+WHERE ORG_CODE = 'expert' AND  LENGTH(USER_ID_CARD_NUMBER) <=20 AND USER_ID_CARD_NUMBER NOT IN(
+SELECT USER_ID_CARD_NUMBER FROM p_un_user_base_info where GROUP_ID=4
+);
+
+#企业与申报系统关联,科创委申报系统的SystemId为101
+INSERT INTO p_un_group_sys(GROUP_ID, SYS_ID)
+SELECT GROUP_ID,101 FROM p_un_group WHERE GROUP_ID NOT IN (4,24,272285,272286)
+ AND  GROUP_ID NOT IN(
+SELECT GROUP_ID FROM p_un_group_sys WHERE SYS_ID=101);
+
+#企业与申报系统关联,节能环保申报系统的SystemId为87
+INSERT INTO p_un_group_sys(GROUP_ID, SYS_ID)
+SELECT GROUP_ID,87 FROM p_un_group WHERE GROUP_ID NOT IN (4,24,272285,272286)
+ AND  GROUP_ID NOT IN(
+SELECT GROUP_ID FROM p_un_group_sys WHERE SYS_ID=87);
+
+
+SELECT * FROM temp_szsti_user_role;
+
+#测试服务器上部分企业的信息不在”szstieos.tlk_企业基础信息“表中，但生成环境是全面的；
+#generate company and amdin relationship;
+INSERT INTO p_un_user_role(USER_ID, ROLE_ID)
+SELECT DISTINCT b.USER_ID, 1 AS ROLE_ID FROM temp_szsti_user_role a
+INNER JOIN p_un_user_base_info b ON a.USER_ID_CARD_NUMBER = b.USER_ID_CARD_NUMBER
+INNER JOIN p_un_group c ON b.GROUP_ID = c.GROUP_ID AND c.ORG_CODE = a.ORG_CODE
+WHERE a.ROLE_NAME = '管理员' AND b.USER_ID NOT IN(
+SELECT USER_ID FROM p_un_user_role WHERE ROLE_ID = 1  AND USER_ID IS NOT NULL
+);
+
+#测试服务器上部分企业的信息不在”szstieos.tlk_企业基础信息“表中，但生成环境是全面的；
+#科创委申报系统的单位管理员
+#generate company and amdin relationship;
+INSERT INTO p_un_user_role(USER_ID, ROLE_ID)
+SELECT DISTINCT b.USER_ID, 71 AS ROLE_ID FROM temp_szsti_user_role a
+INNER JOIN p_un_user_base_info b ON a.USER_ID_CARD_NUMBER = b.USER_ID_CARD_NUMBER
+INNER JOIN p_un_group c ON b.GROUP_ID = c.GROUP_ID AND c.ORG_CODE = a.ORG_CODE
+WHERE a.ROLE_NAME = '管理员' AND b.USER_ID NOT IN(
+SELECT USER_ID FROM p_un_user_role WHERE ROLE_ID = 71 AND USER_ID IS NOT NULL
+)  AND c.GROUP_ID NOT IN(4,24,272285,272286);
+
+INSERT INTO p_un_user_role(USER_ID, ROLE_ID)
+SELECT USER_ID ,71 FROM p_un_user_role WHERE ROLE_ID=1 AND USER_ID NOT IN(
+SELECT USER_ID FROM p_un_user_role where role_Id=71);
+
+
+#环保资金管理系统的单位管理员
+INSERT INTO p_un_user_role(USER_ID, ROLE_ID)
+SELECT DISTINCT b.USER_ID, 47 AS ROLE_ID FROM temp_szsti_user_role a
+INNER JOIN p_un_user_base_info b ON a.USER_ID_CARD_NUMBER = b.USER_ID_CARD_NUMBER
+INNER JOIN p_un_group c ON b.GROUP_ID = c.GROUP_ID AND c.ORG_CODE = a.ORG_CODE
+WHERE a.ROLE_NAME = '管理员' AND b.USER_ID NOT IN(
+SELECT USER_ID FROM p_un_user_role WHERE ROLE_ID = 47  AND USER_ID IS NOT NULL) 
+AND c.GROUP_ID NOT IN(4,24,272285,272286);
+
+#将企业的所有人有都与申报人有的角色相管理
+#申报人员
+INSERT INTO p_un_user_role(USER_ID, ROLE_ID)
+SELECT c.USER_ID, 70 FROM p_un_group_sys a
+INNER JOIN p_un_group b ON a.GROUP_ID = b.GROUP_ID
+INNER JOIN p_un_user_base_info c ON c.GROUP_ID = a.GROUP_ID
+WHERE a.SYS_ID = 101 AND c.USER_ID =10080 AND c.USER_ID NOT IN(
+  SELECT USER_ID FROM p_un_user_role WHERE ROLE_ID IN(70)  AND USER_ID IS NOT NULL#"70"为申报系统中角色ID
+) AND a.GROUP_ID NOT IN(4,24,272285,272286)
+ORDER BY c.USER_ID;
+
+
+#将企业的所有人有都与环保资金系统申报人有的角色相管理
+#申报人员
+INSERT INTO p_un_user_role(USER_ID, ROLE_ID)
+SELECT c.USER_ID, 48 FROM p_un_group_sys a
+INNER JOIN p_un_group b ON a.GROUP_ID = b.GROUP_ID
+INNER JOIN p_un_user_base_info c ON c.GROUP_ID = a.GROUP_ID
+WHERE a.SYS_ID = 87 AND c.USER_ID NOT IN(
+  SELECT USER_ID FROM p_un_user_role WHERE ROLE_ID IN(48)  AND USER_ID IS NOT NULL#"70"为申报系统中角色ID
+) AND a.GROUP_ID NOT IN(4,24,272285,272286)
+ORDER BY c.USER_ID;
+
+#将所有的专家设置评审的权限；
+INSERT INTO p_un_user_role(USER_ID, ROLE_ID)
+SELECT USER_ID, 64 FROM p_un_user_base_info a
+WHERE a.GROUP_ID = 4 AND USER_ID NOT IN(
+SELECT USER_ID FROM p_un_user_role WHERE ROLE_ID=64);

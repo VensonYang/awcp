@@ -1,0 +1,60 @@
+
+
+ALTER TABLE project_group_info
+ADD DAY_PERIOD VARCHAR(100) NULL COMMENT '一天中的时间段，枚举类型，包括全天、上午和下午';
+
+
+ALTER TABLE expert_group_info
+ADD DAY_PERIOD VARCHAR(100) NULL COMMENT '一天中的时间段，枚举类型，包括全天、上午和下午';
+
+
+ALTER TABLE project_expert_match
+ADD DAY_PERIOD VARCHAR(100) NULL COMMENT '一天中的时间段，枚举类型，包括全天、上午和下午';
+
+
+ALTER TABLE expert_expert_group
+ADD STATUS INT NULL COMMENT '专家的状态：10为待打电话确认，20为已打电话确认';
+
+
+
+
+
+
+ALTER TABLE env_review_table ADD CORE_INT_PROPERTY INT NULL COMMENT '自主知识产权';
+ALTER TABLE env_review_table ADD CORE_INT_PROPERTY_LEVEL VARCHAR(100) NULL COMMENT '自主知识产权标准';
+ALTER TABLE env_review_table ADD TECH_PROD_CONVERSION INT NULL COMMENT '科技成果转化能力';
+ALTER TABLE env_review_table ADD TECH_PROD_CONVERSION_LEVEL VARCHAR(100) NULL COMMENT '科技成果转化能力标准';
+ALTER TABLE env_review_table ADD RESEARCH_MANAGEMENT INT NULL COMMENT '研究开发组织管理水平';
+ALTER TABLE env_review_table ADD RESEARCH_MANAGEMENT_LEVEL VARCHAR(100) NULL COMMENT '研究开发组织管理水平标准';
+ALTER TABLE env_review_table ADD TOTAL_ASSET_INCREAMENT INT NULL COMMENT '总资产成长性指标';
+ALTER TABLE env_review_table ADD TOTAL_ASSET_INCREAMENT_LEVEL VARCHAR(100) NULL COMMENT '总资产成长性指标标准';
+ALTER TABLE env_review_table ADD SALES_INCREAMENT INT NULL COMMENT '销售额成长性指标';
+ALTER TABLE env_review_table ADD SALES_INCREAMENT_LEVEL VARCHAR(100) NULL COMMENT '销售额成长性指标标准';
+
+
+ALTER TABLE env_review_table ADD TOTAL_RD_EXPENSE DECIMAL(17,2) NULL COMMENT '近三年研发经费核定总额';
+ALTER TABLE env_review_table ADD RD_EXPENSE_RATIO DECIMAL(17,2) NULL COMMENT '近三年研发费占比';
+ALTER TABLE env_review_table ADD HIGH_TECH_PROD_INCOME DECIMAL(17,2) NULL COMMENT '近一年高新技术产品（服务）销售收入核定数（万元）';
+ALTER TABLE env_review_table ADD HIGH_TECH_PROD_RATIO DECIMAL(17,2) NULL COMMENT '近一年年高新技术收入/当年总收入';
+ALTER TABLE env_review_table ADD INTERNAL_RD_EXPENSE DECIMAL(17,2)  NULL COMMENT '中国境内研发费用总额核定数';
+ALTER TABLE env_review_table ADD INTERNAL_RD_EXPENSE_RATIO DECIMAL(17,2) NULL COMMENT '中国境内研发费用总额核定数';
+ALTER TABLE env_review_table ADD OTHER_RD_EXPENSE DECIMAL(17,2) NULL COMMENT '近三年其他研发费用合计';
+ALTER TABLE env_review_table ADD OTHER_RD_EXPENSE_RATION DECIMAL(17,2) NULL COMMENT '近三年其它/总研发费';
+ALTER TABLE env_review_table ADD ASSET_INCREASE_RATIO DECIMAL(17,2) NULL COMMENT '资产增长率';
+ALTER TABLE env_review_table ADD SALES_INCREASE_RATIO DECIMAL(17,2) NULL COMMENT '销售增长率';
+
+
+ALTER TABLE env_review_table ADD VALID_AUDIT_REPORT CHAR(1) NULL COMMENT '审计报告是否存在问题：”０“表示无问题，”１“表示有问题';
+ALTER TABLE env_review_table ADD VALID_TAX_REPORT CHAR(1) NULL COMMENT '审计报告是否与国地税报表是否一致：”１“表示一致，”０“表示不一致';
+
+
+
+
+ALTER TABLE env_review_table ADD SCIENT_DISCOVERY INT NULL COMMENT '科学发现程度';
+ALTER TABLE env_review_table ADD ACADEMIC_VIEWPOINT INT NULL COMMENT '学术观点';
+ALTER TABLE env_review_table ADD PAPER_IMPACT INT NULL COMMENT '发表刊物和专著的影响程度';
+ALTER TABLE env_review_table ADD SCIENT_DEVELOPMENT INT NULL COMMENT '推动科学发展或满足发展需求的作用';
+
+ALTER TABLE expert_base_info ADD IS_NATIONAL_EXPERT CHAR(1) NULL COMMENT '是否国家级专家－来至国家的专家库';
+ALTER TABLE expert_base_info ADD TYPE VARCHAR(100) NULL COMMENT '专家类型枚举，包括技术专家、财务专家等';
+

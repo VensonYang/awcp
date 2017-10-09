@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<sysconfig>
+  <!--ibatis配置文件  -->
+  <dbConfigFile>conf/mybatis-config.xml</dbConfigFile>
+
+<!--ibatis配置文件
+  <dbPropFile>f:/conf/jdbc.properties</dbPropFile>
+-->
+ <app>itemsys</app> 
+
+</sysconfig>
