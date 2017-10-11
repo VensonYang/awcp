@@ -1,0 +1,15 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>cn.org.awcp</groupId>
+    <artifactId>awcp-framework</artifactId>
+    <version>1.0-SNAPSHOT</version>
+  </parent>
+  <artifactId>awcp-formdesigner</artifactId>
+  <packaging>pom</packaging>
+  <modules>
+  	<module>awcp-formdesigner-core</module>
+  	<module>awcp-formdesigner-application</module>
+  	<module>awcp-formdesigner-applicationImpl</module>
+  </modules>
+</project>

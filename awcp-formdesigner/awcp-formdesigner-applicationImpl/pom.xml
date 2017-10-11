@@ -1,0 +1,152 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>cn.org.awcp</groupId>
+		<artifactId>awcp-formdesigner</artifactId>
+		<version>1.0-SNAPSHOT</version>
+	</parent>
+	<groupId>cn.org.awcp</groupId>
+	<artifactId>awcp-formdesigner-applicationImpl</artifactId>
+	<dependencies>
+		<dependency>
+			<groupId>cn.org.awcp</groupId>
+			<artifactId>awcp-formdesigner-core</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>cn.org.awcp</groupId>
+			<artifactId>awcp-formdesigner-application</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>
+<!-- 		<dependency> -->
+<!-- 			<groupId>cn.org.awcp.superviseclient</groupId> -->
+<!-- 			<artifactId>awcp-superviseclient-core</artifactId> -->
+<!-- 			<version>${project.parent.version}</version> -->
+<!-- 		</dependency> -->
+		<dependency>
+			<groupId>cn.org.awcp</groupId>
+			<artifactId>awcp-metadesigner-applicationImpl</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>cn.org.awcp</groupId>
+			<artifactId>awcp-unit-application</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>
+		<!-- <dependency>
+			<groupId>cn.org.awcp.metadata</groupId>
+			<artifactId>awcp-metadesigner-applicationImpl</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency> -->
+		<dependency>
+			<groupId>cn.org.awcp</groupId>
+			<artifactId>awcp-framework-core</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>
+<!-- 		<dependency> -->
+<!-- 			<groupId>cn.org.awcp.workflow</groupId> -->
+<!-- 			<artifactId>awcp-workflow-application</artifactId> -->
+<!-- 			<version>${project.parent.version}</version> -->
+<!-- 			<exclusions> -->
+<!-- 				<exclusion> -->
+<!-- 					<groupId>cn.org.awcp.workflow</groupId> -->
+<!-- 					<artifactId>awcp-workflow-core</artifactId> -->
+<!-- 				</exclusion> -->
+<!-- 			</exclusions> -->
+<!-- 		</dependency> -->
+		<!-- <dependency>
+			<groupId>cn.org.awcp.workflow</groupId>
+			<artifactId>awcp-workflow-applicationImpl</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency> -->
+		<!-- SPRING 依赖包 -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-tx</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-core</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-beans</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-jdbc</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-web</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-webmvc</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>javax.servlet-api</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>commons-beanutils</groupId>
+			<artifactId>commons-beanutils</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>commons-logging</groupId>
+					<artifactId>commons-logging</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.mybatis</groupId>
+			<artifactId>mybatis</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.mybatis</groupId>
+			<artifactId>mybatis-spring</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.github.miemiedev</groupId>
+			<artifactId>mybatis-paginator</artifactId>
+		</dependency>
+		
+		<dependency>
+			<groupId>com.itextpdf</groupId>
+			<artifactId>itextpdf</artifactId>
+		</dependency>
+		
+	<!-- 	<dependency>
+    		<groupId>com.microsoft.sqlserver</groupId>
+    		<artifactId>sqljdbc4</artifactId>
+		</dependency> -->
+		
+		<dependency>
+			<groupId>net.sf.ehcache</groupId>
+			<artifactId>ehcache-core</artifactId>
+			<scope>compile</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpclient</artifactId>
+			<version>4.4</version>
+		</dependency>
+	</dependencies>
+</project>
